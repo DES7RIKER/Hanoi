@@ -1,40 +1,37 @@
-#Practica 1
-#MOISES ISAIAS LOPEZ RIZO 697253
-#ELIAS GASPAR ARELLANO    704205
+# Practice 1
+# MOISES ISAIAS LOPEZ RIZO 697253
+# ELIAS GASPAR ARELLANO    704205
 .data 
 .text
 
-ori $a3, $a3, 8 # 'n' cantidad de discos requeridos
+ori $s0, $s0, 8 # 'n' Number of disks
 
-#SE DECLARAN LOS APUNTADORES A LAS COLUMNAS
-######################
-ori $t0, $t0, 0x1001 #Carga parte alta
-sll $t0, $t0, 16     #Recorrer a la parte alta
-ori $s5, $t0, 0x0000 #Torre Inicial
-ori $s6, $t0, 0x0020 #Torre Auxiliar 
-ori $s7, $t0, 0x0040 #Torre Final
-######################
+# POINTERS TO TOWERS
+###########################
+ori $t0, $t0, 0x1001 		# Loads higher bytes of memory address
+sll $t0, $t0, 16     		# Moves higher bytes of memory to left
+ori $s5, $t0, 0x0000 		# Initial tower
+ori $s6, $t0, 0x0020 		# Aux tower
+ori $s7, $t0, 0x0040 		# Final tower
+###########################
 
-InitTower:
-#########################
-sw $a3, ($s5)           #inicializa las torres 
-addi $s5, $s5, 4        #
-add $a3, $a3, -1        #
-bne $a3, $zero,InitTower#
-ori $s5, $t0, 0x0000    #regresa al valor de la base
-#########################
+Initialize:
+###########################
+or $t1, $t1, $s0	  	# Get number of disks
+sw $t1, ($s5)             	# Stores disk N into initial tower
+addi $s5, $s5, 4          	# Tower pointer increase
+add $t1, $t1, -1          	# Disk N-1 
+bne $t1, $zero, Initialize	#
+ori  $s5, $t0, 0x0000    	# Set pointer to initial position
+###########################
 
-Expandir:	      
-#######################
-lw $a0, ($s6)         #
-beq $a0, $zero, jump1 # si el valor inicial de la segunda 
-addi $s6, $s6, 32     # torre no es 0 (por que es de mas 
-addi $s7, $s7, 64     # de 8 e invadio la segunda torre)
-j Expandir            # recorre las torres 2 y 3
-jump1:                #
-#######################
-
-
-# en este punto puede iniciar la funcion recurciva 
-# se tienen los discos ya pocicionados en la tore inicial y se decalararon los apuntadores a las baces de las torres en s5,s6,s7
+Expand:	      
+###########################
+lw $t1, ($s6)         
+beq $t1, $zero, continue	# If the initial value of the second tower is not zero
+addi $s6, $s6, 32     		# it means that tower 1(initial) invaded addresses of tower 2, 
+addi $s7, $s7, 64     		# so it is necessary to move base pointers of tower 2 and 3.
+j Expand              
+conitinue:                
+###########################
 
