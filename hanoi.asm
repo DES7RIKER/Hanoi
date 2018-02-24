@@ -38,5 +38,3 @@ jump1:                #
 # en este punto puede iniciar la funcion recurciva 
 # se tienen los discos ya pocicionados en la tore inicial y se decalararon los apuntadores a las baces de las torres en s5,s6,s7
 
-
-
