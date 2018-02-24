@@ -4,7 +4,7 @@
 .data 
 .text
 
-ori $s0, $s0, 8 # 'n' Number of disks
+ori $s0, $s0, 12 # 'n' Number of disks
 
 # POINTERS TO TOWERS
 ###########################
@@ -15,9 +15,10 @@ ori $s6, $t0, 0x0020 		# Aux tower
 ori $s7, $t0, 0x0040 		# Final tower
 ###########################
 
+or $t1, $t1, $s0	  	# Get number of disks
+
 Initialize:
 ###########################
-or $t1, $t1, $s0	  	# Get number of disks
 sw $t1, ($s5)             	# Stores disk N into initial tower
 addi $s5, $s5, 4          	# Tower pointer increase
 add $t1, $t1, -1          	# Disk N-1 
@@ -32,6 +33,6 @@ beq $t1, $zero, continue	# If the initial value of the second tower is not zero
 addi $s6, $s6, 32     		# it means that tower 1(initial) invaded addresses of tower 2, 
 addi $s7, $s7, 64     		# so it is necessary to move base pointers of tower 2 and 3.
 j Expand              
-conitinue:                
+continue:                
 ###########################
 
