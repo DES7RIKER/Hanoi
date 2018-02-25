@@ -48,23 +48,24 @@ continue:
 #########################################    Functions	#########################################
 # $a0 = n, $a1 = ini, $a2 = aux, $a3 = end
 Hanoi:
-	addi $sp, $sp, -8
-	sw $ra, 0($sp)
-	sw $a0, 4($sp)
+	addi $sp, $sp, -8		# Stack saves:
+	sw $ra, 0($sp)			# Return address
+	sw $a0, 4($sp)			# Number of disks
 
 	# Base case
 	bne $a0, 1, else
 	
-	# Move ini to end
-	# When you load data you need to ask if address has something inside it, if not, you decrement address + offset condition
+	# Move Ini to End
+	# When it loads data and decrements pointer, we need to ensure that we respect the beginning of each tower
 	lw $t0, 0($a1)
 	sw $zero, 0($a1)
 	beq $a1, $s5, noDec
 	beq $a1, $s6, noDec
 	beq $a1, $s7, noDec
 	addi $a1, $a1, -4
-noDec:	# When you store data you don't want to overwrite information, if address has something inside it, you increment address
-	lw $t1, 0($a3)
+	# When it stores data you do not want to overwrite information, so if address has something inside it, 
+	# you need to increment pointer
+noDec:	lw $t1, 0($a3)
 	beq $t1, $zero, write
 	addi $a3, $a3, 4
 write:	sw $t0, 0($a3)
@@ -77,19 +78,22 @@ else:
 	add $a2, $zero, $a3		# Aux <- End
 	add $a3, $zero, $t0		# End <- Aux 
 	jal Hanoi			# Thus Hanoi is called in this way: Hanoi(n-1, ini, end, aux)
+	
 	add $t0, $zero, $a2		# Save aux in a temporal register
 	add $a2, $zero, $a3		# Aux <- End
-	add $a3, $zero, $t0		# End <- Aux 
+	add $a3, $zero, $t0		# End <- Aux (recovers data from last call)
 	
-		# Move ini to end
-	# When you load data you need to ask if address has something inside it, if not, you decrement address + offset condition
+	# Move Ini to End
+	# When it loads data and decrements pointer, we need to ensure that we respect the beginning of each tower
 	lw $t0, 0($a1)
 	sw $zero, 0($a1)
 	beq $a1, $s5, noDec2
 	beq $a1, $s6, noDec2
 	beq $a1, $s7, noDec2
 	addi $a1, $a1, -4
-noDec2:	# When you store data you don't want to overwrite information, if address has something inside it, you increment address
+	# When it stores data you do not want to overwrite information, so if address has something inside it, 
+	# you need to increment pointer
+noDec2:	
 	lw $t1, 0($a3)
 	beq $t1, $zero, write2
 	addi $a3, $a3, 4
@@ -100,14 +104,15 @@ write2:	sw $t0, 0($a3)
 	add $a2, $zero, $a1		# Aux <- Ini
 	add $a1, $zero, $t0		# Ini <- Aux 
 	jal Hanoi			# Thus Hanoi is called in this way: Hanoi(n-1, aux, ini, fin)
+	
 	add $t0, $zero, $a2		# Save aux in a temporal register
 	add $a2, $zero, $a1		# Aux <- Ini
-	add $a1, $zero, $t0		# Ini <- Aux 
+	add $a1, $zero, $t0		# Ini <- Aux (recovers data from last call)
 
 return: 
-	lw $ra, 0($sp)
-	lw $a0, 4($sp)
-	addi $sp, $sp, 8
+	lw $ra, 0($sp)			# Recover return address
+	lw $a0, 4($sp)			# Recover number of disks
+	addi $sp, $sp, 8		# Frees addresses of stack pointer
 	jr $ra
 	
 ######################################### End Functions	#########################################
