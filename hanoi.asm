@@ -4,7 +4,7 @@
 .data 
 .text
 #########################################	Main	#########################################
-	ori $s0, $s0, 8 # 'n' Number of disks
+	ori $s0, $s0, 3 # 'n' Number of disks
 
 # POINTERS TO TOWERS
 ###########################
@@ -23,7 +23,7 @@ Initialize:
 	addi $s5, $s5, 4          	# Tower pointer increase
 	add $t1, $t1, -1          	# Disk N-1 
 	bne $t1, $zero, Initialize	#
-	ori  $s5, $t0, 0x0000    	# Set pointer to initial position
+	addi  $s5, $s5, -4    		# Returns pointer to last disk in Initial tower
 ###########################
 
 Expand:	      
@@ -35,34 +35,61 @@ Expand:
 	j Expand              
 	continue:                
 ###########################
-
+	add $a0, $zero, $s0
+	add $a1, $zero, $s5
+	add $a2, $zero, $s6
+	add $a3, $zero, $s7
+	jal Hanoi
 	j exit
 #########################################    End Main	#########################################
 #########################################    Functions	#########################################
 # $a0 = n, $a1 = ini, $a2 = aux, $a3 = end
 Hanoi:
+	addi $sp, $sp, -8
+	sw $ra, 0($sp)
+	sw $a0, 4($sp)
+
 	bne $a0, 1, else
 	# Move ini to end
+	lw $t0, 0($a1)
+	sw $t0, 0($a3)
+	sw $zero, 0($a1)
+	addi $a1, $a1, -4#??
+	addi $a3, $a3, 4#??
 	j return
 	
-else:	addi $a0, $a0, -1		# N - 1
+else:	
+	addi $a0, $a0, -1		# N - 1
 
 	add $t0, $zero, $a2		# Save aux in a temporal register
 	add $a2, $zero, $a3		# Aux <- End
 	add $a3, $zero, $t0		# End <- Aux 
 	jal Hanoi			# Thus Hanoi is called in this way: Hanoi(n-1, ini, end, aux)
+	add $t0, $zero, $a2		# Save aux in a temporal register
+	add $a2, $zero, $a3		# Aux <- End
+	add $a3, $zero, $t0		# End <- Aux 
 	
 	# Move ini to end
+	lw $t0, 0($a1)
+	sw $t0, 0($a3)
+	sw $zero, 0($a1)
+	addi $a1, $a1, -4#
+	addi $a3, $a3, 4#
 	
 	# N is already decremented
-	add $t0, $zero, $a3		# Save Aux value in a temporal register (it is stored in $a3 due to the last call to Hanoi)
-	add $t1, $zero, $a2		# Save End value in a temporal register (it is stored in $a2 due to the last call to Hanoi)
+	add $t0, $zero, $a2		# Save aux in a temporal register
 	add $a2, $zero, $a1		# Aux <- Ini
-	add $a1, $zero, $t0		# Ini <- Aux
-	add $a3, $zero, $t1		# End <- End
+	add $a1, $zero, $t0		# Ini <- Aux 
 	jal Hanoi			# Thus Hanoi is called in this way: Hanoi(n-1, aux, ini, fin)
-	
+	add $t0, $zero, $a2		# Save aux in a temporal register
+	add $a2, $zero, $a1		# Aux <- Ini
+	add $a1, $zero, $t0		# Ini <- Aux 
+
 return: 
+
+	lw $ra, 0($sp)
+	lw $a0, 4($sp)
+	addi $sp, $sp, 8
 	jr $ra
 	
 ######################################### End Functions	#########################################
