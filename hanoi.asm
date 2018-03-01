@@ -39,7 +39,7 @@ Expand:
 
 continue: 
 	add $a0, $zero, $s0		# Prepare arguments to call Hanoi
-	add $a1, $zero, $t2		# $a1, $a2, $a3 store the address of the last disk stacked in them
+	add $a1, $zero, $t2		# $a1, $a2, $a3 store the address of the last disk stacked in them.
 	add $a2, $zero, $s6
 	add $a3, $zero, $s7
 	jal Hanoi
@@ -56,7 +56,7 @@ Hanoi:
 	bne $a0, 1, else
 	
 	# Move Ini to End
-	# When it loads data and decrements pointer, we need to ensure that we respect the beginning of each tower
+	# When it loads data and decrements pointer, we need to ensure that we respect the beginning of each tower.
 	lw $t0, 0($a1)
 	sw $zero, 0($a1)
 	beq $a1, $s5, noDec
@@ -103,7 +103,7 @@ write2:	sw $t0, 0($a3)
 	add $t0, $zero, $a2		# Save aux in a temporal register
 	add $a2, $zero, $a1		# Aux <- Ini
 	add $a1, $zero, $t0		# Ini <- Aux 
-	jal Hanoi			# Thus Hanoi is called in this way: Hanoi(n-1, aux, ini, fin)
+	jal Hanoi			# Thus Hanoi is called in this way: Hanoi(n-1, aux, ini, end)
 	
 	add $t0, $zero, $a2		# Save aux in a temporal register
 	add $a2, $zero, $a1		# Aux <- Ini
