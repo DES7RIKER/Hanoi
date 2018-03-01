@@ -103,7 +103,7 @@ write2:	sw $t0, 0($a3)
 	add $t0, $zero, $a2		# Save aux in a temporal register
 	add $a2, $zero, $a1		# Aux <- Ini
 	add $a1, $zero, $t0		# Ini <- Aux 
-	jal Hanoi			# Thus Hanoi is called in this way: Hanoi(n-1, aux, ini, fin)
+	jal Hanoi			# Thus Hanoi is called in this way: Hanoi(n-1, aux, ini, end)
 	
 	add $t0, $zero, $a2		# Save aux in a temporal register
 	add $a2, $zero, $a1		# Aux <- Ini
